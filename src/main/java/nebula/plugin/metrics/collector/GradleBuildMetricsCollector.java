@@ -286,7 +286,7 @@ public final class GradleBuildMetricsCollector implements BuildListener, Project
         if (elapsedTotal < expectedTotal) {
             long difference = expectedTotal - elapsedTotal;
             logger.info("Total build time of {}ms is less than the calculated total of {}ms (difference: {}ms). Creating 'unknown' event with type 'other'", expectedTotal, elapsedTotal, difference);
-            dispatcher.event("unknown", "other", difference);
+            //dispatcher.event("unknown", "other", difference);
         }
 
         buildProfileComplete.getAndSet(true);
