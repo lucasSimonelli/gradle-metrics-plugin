@@ -60,17 +60,17 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
 
 public final class GradleBuildMetricsCollector implements BuildListener, ProjectEvaluationListener, TaskExecutionListener, DependencyResolutionListener {
 
-    private static final long TIMEOUT_MS = 5000;
-
     private final Logger logger = MetricsLoggerFactory.getLogger(GradleBuildMetricsCollector.class);
     private final Supplier<MetricsDispatcher> dispatcherSupplier;
 
     private final AtomicBoolean buildProfileComplete = new AtomicBoolean(false);
     private final AtomicBoolean buildResultComplete = new AtomicBoolean(false);
+    private final int timeoutMillis;
 
-    public GradleBuildMetricsCollector(Supplier<MetricsDispatcher> dispatcherSupplier, BuildStartedTime buildStartedTime, Gradle gradle, Clock clock) {
+    public GradleBuildMetricsCollector(Supplier<MetricsDispatcher> dispatcherSupplier, int timeoutMillis, BuildStartedTime buildStartedTime, Gradle gradle, Clock clock) {
         checkNotNull(dispatcherSupplier);
         checkNotNull(clock);
+        this.timeoutMillis = timeoutMillis;
         this.dispatcherSupplier = checkNotNull(dispatcherSupplier);
         this.clock = clock;
         this.buildStartedTime = buildStartedTime;
@@ -164,7 +164,7 @@ public final class GradleBuildMetricsCollector implements BuildListener, Project
         StartParameter startParameter = gradle.getStartParameter();
         checkState(!startParameter.isOffline(), "Collectors should not be registered when Gradle is running offline");
         try {
-            dispatcherSupplier.get().startAsync().awaitRunning(TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            dispatcherSupplier.get().startAsync().awaitRunning(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (IllegalStateException | TimeoutException e) {
             logger.debug("Error while starting metrics dispatcher. Metrics collection disabled. Error message: {}", getRootCauseMessage(e));
             return;
@@ -305,9 +305,9 @@ public final class GradleBuildMetricsCollector implements BuildListener, Project
         MetricsDispatcher dispatcher = this.dispatcherSupplier.get();
         logger.info("Shutting down dispatcher");
         try {
-            dispatcher.stopAsync().awaitTerminated(TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            dispatcher.stopAsync().awaitTerminated(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (TimeoutException e) {
-            logger.debug("Timed out after {}ms while waiting for metrics dispatcher to terminate", TIMEOUT_MS);
+            logger.debug("Timed out after {}ms while waiting for metrics dispatcher to terminate", timeoutMillis);
         } catch (IllegalStateException e) {
             logger.debug("Could not stop metrics dispatcher service (error message: {})", getRootCauseMessage(e));
         }

@@ -46,6 +46,7 @@ public class MetricsPluginExtension {
     private String fullURI = null;
     private String hostname = "localhost";
     private int transportPort = 9300;
+    private int timeoutMillis = 5000;
     private int httpPort = 9200;
     private String clusterName = "elasticsearch";
     private String indexName = DEFAULT_INDEX_NAME;
@@ -67,6 +68,14 @@ public class MetricsPluginExtension {
     private String sanitizedPropertiesRegex = "(?i).*_(TOKEN|KEY|SECRET|PASSWORD)$";
     private boolean failOnError = true;
     private boolean verboseErrorOutput = false;
+
+    public int getTimeoutMillis() {
+        return timeoutMillis;
+    }
+
+    public void setTimeoutMillis(int timeoutMillis) {
+        this.timeoutMillis = timeoutMillis;
+    }
 
     public String getHostname() {
         return hostname;
