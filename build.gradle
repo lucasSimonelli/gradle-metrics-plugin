@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
+buildscript {
+	repositories {
+		mavenLocal()
+
+		maven {
+			name 'artifactory'
+			url "${project.mArtifactoryUrl}/virtual-mvn"
+			credentials {
+				username project.mArtifactoryUser
+				password project.mArtifactoryPassword
+			}
+		}
+	}
+}
 plugins {
-    id 'nebula.plugin-plugin' version '9.3.7'
-    id 'com.github.johnrengelman.shadow' version '4.0.0'
-    id "io.franzbecker.gradle-lombok" version "1.14"
+	id 'nebula.plugin-plugin' version '9.3.7'
+	id 'com.github.johnrengelman.shadow' version '4.0.0'
+	id "io.franzbecker.gradle-lombok" version "1.14"
 }
 
 apply from: 'gradle/tests.gradle'
@@ -27,7 +41,31 @@ apply from: 'gradle/dependencies.gradle'
 description 'Gradle metrics plugin'
 
 lombok {
-    version = '1.16.20'
+	version = '1.16.20'
+}
+version = "8.5.0-medallia"
+
+artifactory {
+	publish {
+		contextUrl = "${project.mArtifactoryUrl}"
+		repository {
+			repoKey = 'virtual-mvn'
+			username = project.mArtifactoryUser
+			password = 	project.mArtifactoryPassword
+		}
+	}
+}
+
+repositories {
+	mavenLocal()
+	maven {
+		name 'artifactory'
+		url "${project.mArtifactoryUrl}/virtual-mvn"
+		credentials {
+			username project.mArtifactoryUser
+			password project.mArtifactoryPassword
+		}
+	}
 }
 
 contacts {
@@ -48,7 +86,7 @@ contacts {
 pluginBundle {
     plugins {
         metrics {
-            id = 'nebula.metrics'
+            id = 'nebula.metrics-medallia'
             displayName = 'Gradle Metrics plugin'
             description = project.description
             tags = ['nebula', 'metrics']
