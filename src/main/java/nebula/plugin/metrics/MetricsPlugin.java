@@ -97,7 +97,7 @@ public final class MetricsPlugin implements Plugin<Project> {
             return;
         }
 
-        configureRootProjectCollectors(project, buildStartedTime);
+        configureRootProjectCollectors(project, extension.getTimeoutMillis(), buildStartedTime);
         project.afterEvaluate(new Action<Project>() {
             @Override
             public void execute(Project project) {
@@ -142,9 +142,9 @@ public final class MetricsPlugin implements Plugin<Project> {
         return dispatcher;
     }
 
-    private void configureRootProjectCollectors(Project rootProject, BuildStartedTime buildStartedTime) {
+    private void configureRootProjectCollectors(Project rootProject, int timeoutMillis, BuildStartedTime buildStartedTime) {
         final Gradle gradle = rootProject.getGradle();
-        final GradleBuildMetricsCollector gradleCollector = new GradleBuildMetricsCollector(dispatcherSupplier, buildStartedTime, gradle, clock);
+        final GradleBuildMetricsCollector gradleCollector = new GradleBuildMetricsCollector(dispatcherSupplier, timeoutMillis, buildStartedTime, gradle, clock);
         gradle.addListener(gradleCollector);
         gradle.buildFinished(new Closure(null) {
             protected Object doCall(Object arguments) {
