@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-
+apply plugin: 'idea'
 idea {
     project {
         def javaTarget = '1.7'

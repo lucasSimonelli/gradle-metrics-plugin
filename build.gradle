@@ -43,19 +43,29 @@ description 'Gradle metrics plugin'
 lombok {
 	version = '1.16.20'
 }
-version = "8.5.0-medallia"
 
 artifactory {
 	publish {
 		contextUrl = "${project.mArtifactoryUrl}"
 		repository {
-			repoKey = 'virtual-mvn'
 			username = project.mArtifactoryUser
 			password = 	project.mArtifactoryPassword
 		}
 	}
 }
 
+publishing {
+	repositories {
+		maven {
+			name 'artifactory'
+			url "${project.mArtifactoryUrl}/dev-gradle"
+			credentials {
+				username project.mArtifactoryUser
+				password project.mArtifactoryPassword
+			}
+		}
+	}
+}
 repositories {
 	mavenLocal()
 	maven {

@@ -15,5 +15,5 @@
  *
  */
 
-rootProject.name = 'gradle-metrics-plugin'
+rootProject.name = 'gradle-metrics-plugin-medallia'
 

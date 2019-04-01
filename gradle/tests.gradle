@@ -14,7 +14,8 @@
  * limitations under the License.
  *
  */
-
+apply plugin: 'idea'
+apply plugin: 'java-library'
 task('checkSourceFiles') {
     doLast {
         def sourceSet = sourceSets.main.java
@@ -38,9 +39,9 @@ task('checkSourceFiles') {
 }
 compileJava.dependsOn checkSourceFiles
 
-facets {
-    integTest {
-        parentSourceSet = 'test'
-        testTaskName = 'integrationTest'
-    }
-}
+//facets {
+//    integTest {
+//        parentSourceSet = 'test'
+//        testTaskName = 'integrationTest'
+//    }
+//}
